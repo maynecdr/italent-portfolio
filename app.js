@@ -106,6 +106,47 @@ const SKILLS_TXT = [
 
 const COMMANDS = ['ls', 'cd', 'pwd', 'help', 'clear', 'cat', 'fastfetch', 'doom'];
 
+const RM_RF_LINES = [
+  "rm: removing '/bin/sh'",
+  "rm: removing '/bin/bash'",
+  "rm: removing '/bin/ls'",
+  "rm: removing '/bin/cat'",
+  "rm: removing '/bin/kill'",
+  "rm: removing '/bin/rm'",
+  "rm: removing '/usr/bin/python3'",
+  "rm: removing '/usr/bin/sudo'",
+  "rm: removing '/usr/bin/vim'",
+  "rm: removing '/usr/bin/ssh'",
+  "rm: removing '/usr/bin/curl'",
+  "rm: removing '/usr/bin/apt'",
+  "rm: removing '/usr/bin/gcc'",
+  "rm: removing '/usr/bin/make'",
+  "rm: removing '/etc/passwd'",
+  "rm: removing '/etc/shadow'",
+  "rm: removing '/etc/fstab'",
+  "rm: removing '/etc/hostname'",
+  "rm: removing '/etc/hosts'",
+  "rm: removing '/etc/crontab'",
+  "rm: removing '/etc/resolv.conf'",
+  "rm: removing '/home/anatolii/.bashrc'",
+  "rm: removing '/home/anatolii/.profile'",
+  "rm: removing '/home/anatolii/.ssh/id_rsa'",
+  "rm: removing '/home/anatolii/.ssh/authorized_keys'",
+  "rm: removing '/home/anatolii/documents/thesis.pdf'",
+  "rm: removing '/home/anatolii/documents/portfolio.zip'",
+  "rm: removing '/var/log/auth.log'",
+  "rm: removing '/var/log/syslog'",
+  "rm: removing '/var/cache/apt/archives'",
+  "rm: removing '/lib/x86_64-linux-gnu/libc.so.6'",
+  "rm: removing '/lib/x86_64-linux-gnu/libm.so.6'",
+  "rm: removing '/lib/x86_64-linux-gnu/libpthread.so.0'",
+  "rm: removing '/boot/vmlinuz-6.1.0-25-amd64'",
+  "rm: removing '/boot/initrd.img-6.1.0-25-amd64'",
+  "rm: removing '/boot/grub/grub.cfg'",
+  "rm: removing '/'",
+  "Segmentation fault (core dumped)",
+];
+
 const FS = {
   '/': {
     type: 'dir',
@@ -343,6 +384,38 @@ function startDoom() {
     });
 }
 
+function launchRmRf() {
+  var rmrfOverlay = document.getElementById('rmrfOverlay');
+  var i = 0;
+  cmdline.disabled = true;
+
+  function printNext() {
+    if (i < RM_RF_LINES.length) {
+      var cls = RM_RF_LINES[i].startsWith('Seg') ? 'muted' : '';
+      appendLine(RM_RF_LINES[i], cls);
+      i++;
+      setTimeout(printNext, i < RM_RF_LINES.length - 3 ? 55 : 200);
+    } else {
+      setTimeout(function() {
+        document.body.classList.add('rmrf-active');
+        rmrfOverlay.setAttribute('aria-hidden', 'false');
+
+        function dismiss() {
+          document.body.classList.remove('rmrf-active');
+          rmrfOverlay.setAttribute('aria-hidden', 'true');
+          cmdline.disabled = false;
+          cmdline.focus();
+          document.removeEventListener('keydown', dismiss);
+          rmrfOverlay.removeEventListener('click', dismiss);
+        }
+        document.addEventListener('keydown', dismiss);
+        rmrfOverlay.addEventListener('click', dismiss);
+      }, 600);
+    }
+  }
+  printNext();
+}
+
 function launchDoom() {
   appendLine('launching retro mode...');
   appendLine('[press ESC to return to terminal]', 'muted');
@@ -354,6 +427,7 @@ function launchDoom() {
 function handleLoggedInCommand(raw) {
   var input = raw.trim();
   if (!input) return;
+  if (input === 'rm -rf /') { launchRmRf(); return; }
   var parts = input.split(' ');
   var command = parts[0];
   var args = parts.slice(1);

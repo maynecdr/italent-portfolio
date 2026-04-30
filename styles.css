@@ -38,4 +38,9 @@ body.doom-launching .doom-panel:nth-child(4) { transition-delay:270ms; }
 body.doom-launching .doom-panel:nth-child(5) { transition-delay:360ms; }
 body.doom-launching .doom-panel:nth-child(6) { transition-delay:450ms; }
 body.doom-launching .app { transform:translateY(100vh); filter:brightness(.7) blur(2px); pointer-events:none; }
+.rmrf-overlay { position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:10001; display:flex; align-items:center; justify-content:center; transition:opacity 3s ease; }
+body.rmrf-active .rmrf-overlay { opacity:1; pointer-events:auto; }
+.rmrf-box { border:3px solid #5e5e3c; box-shadow:inset 0 0 0 1px #2e2e1a, 0 0 40px rgba(0,0,0,.9); background:#060606; padding:52px 64px; max-width:660px; width:90%; text-align:center; }
+.rmrf-text { font-family:'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; color:#bfab6a; font-size:1.22rem; line-height:1.8; margin:0 0 28px; letter-spacing:.01em; }
+.rmrf-hint { font-family:'Courier New', monospace; color:#4a4a3a; font-size:.78rem; margin:0; letter-spacing:.06em; }
 @media (max-width:900px) { body { overflow:auto; } .mobile-block { display:flex; } .app { display:none; } }
