@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLI Portfolio Prototype</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="mobile-block"><div><div style="margin-bottom:10px;font-weight:700;">desktop-only portfolio prototype</div><div class="muted">This interface is designed for a full-sized device with a keyboard.</div></div></div>
+  <div class="doom-overlay" id="doomOverlay" aria-hidden="true"><div class="doom-title">DOOM</div><div class="doom-stage"><div class="doom-panel"></div><div class="doom-panel"></div><div class="doom-panel"></div><div class="doom-panel"></div><div class="doom-panel"></div><div class="doom-panel"></div></div><div class="doom-game">Loading classic Doom...</div></div>
+  <main class="app">
+    <section class="pane">
+      <div class="pane-header">terminal / session</div>
+      <div class="pane-body"><div id="terminalShell" class="terminal-shell"><div class="terminal-content"><div id="output" class="output" aria-live="polite"></div><div class="input-row"><span id="prompt" class="prompt"></span><input id="cmdline" class="cmdline" type="text" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" data-bwignore="true" data-1p-ignore="true" data-lpignore="true" data-form-type="other" name="terminal-command-input" autofocus aria-label="Terminal command input" /></div></div></div></div>
+    </section>
+    <aside class="pane pane-help"><div class="pane-header">help / manual</div><div class="pane-body"><div id="helpPane" class="help-content"></div></div></aside>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

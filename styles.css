@@ -1,0 +1,41 @@
+html, body { margin:0; min-height:100%; background:#000; color:#f2f2f2; font-family:"Courier New", monospace; overflow:hidden; }
+body { min-height:100vh; padding:16px; }
+:root { --line:#2f2f2f; --header:#d8d8d8; --header-line:#5a5a5a; --output:#d8d8d8; --cmd:#fff; --muted:#9a9a9a; }
+* { box-sizing:border-box; }
+.mobile-block { display:none; min-height:calc(100vh - 32px); border:1px solid var(--line); padding:24px; align-items:center; justify-content:center; text-align:center; }
+.app { display:grid; grid-template-columns:minmax(0,2fr) minmax(320px,1fr); gap:16px; height:calc(100vh - 32px); overflow:hidden; align-items:stretch; transition:transform 900ms cubic-bezier(.2,.85,.25,1), filter 300ms ease; }
+.pane { border:1px solid var(--line); min-height:0; min-width:0; overflow:hidden; display:flex; flex-direction:column; height:100%; }
+.pane-header { padding:12px 14px 10px; border-bottom:1px solid var(--header-line); color:var(--header); font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:14px; background:#050505; }
+.pane-body { padding:14px; min-height:0; flex:1; overflow:hidden; }
+.terminal-shell { overflow-y:auto; height:100%; padding-right:6px; scroll-behavior:smooth; }
+.terminal-content { display:flex; flex-direction:column; min-height:100%; }
+.output { white-space:pre-wrap; word-break:break-word; line-height:1.45; color:var(--output); }
+.command-echo { color:var(--cmd); }
+.line { margin:0 0 6px; }
+.muted { color:var(--muted); }
+.ascii-logo { display:inline-block; white-space:pre; line-height:.88; transform:scaleY(.84); transform-origin:top left; margin:0 0 -28px 0; }
+.fastfetch-block { display:block; }
+.input-row { display:flex; align-items:baseline; gap:8px; margin-top:2px; padding-top:2px; }
+.prompt { white-space:pre; flex:0 0 auto; }
+.cmdline { flex:1; min-width:0; background:transparent; border:0; outline:none; color:var(--cmd); font:inherit; caret-color:var(--cmd); }
+.help-content { white-space:pre-wrap; line-height:1.5; height:100%; overflow-y:auto; overflow-x:hidden; padding-right:6px; overscroll-behavior:contain; }
+.pane-help { position:sticky; top:0; align-self:start; }
+.doom-overlay { position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; transition:opacity 300ms ease; z-index:9999; overflow:hidden; }
+.doom-stage { position:absolute; inset:0; display:grid; grid-template-rows:repeat(6, 1fr); }
+.doom-panel { background:#050505; transform:translateY(-110%); transition:transform 520ms cubic-bezier(.2,.85,.25,1); border-bottom:1px solid #111; }
+.doom-title { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:clamp(28px, 6vw, 72px); letter-spacing:.22em; opacity:0; transition:opacity 220ms ease 980ms; z-index:2; text-shadow:0 0 14px rgba(255,255,255,.18); font-family:'Courier New', monospace; }
+.doom-game { position:absolute; inset:0; z-index:3; opacity:0; transition:opacity 400ms ease; display:flex; align-items:center; justify-content:center; color:#fff; font-size:clamp(18px,2vw,28px); }
+.doom-game > iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.doom-close { position:fixed; top:14px; right:18px; z-index:10000; background:rgba(0,0,0,.75); color:#fff; border:1px solid #444; padding:4px 12px; font-family:'Courier New',monospace; font-size:13px; cursor:pointer; letter-spacing:.05em; }
+.doom-close:hover { background:#222; border-color:#aaa; }
+body.doom-launching .doom-overlay { opacity:1; pointer-events:auto; }
+body.doom-launching .doom-title { opacity:1; }
+body.doom-launching .doom-panel { transform:translateY(0); }
+body.doom-launching .doom-panel:nth-child(1) { transition-delay:0ms; }
+body.doom-launching .doom-panel:nth-child(2) { transition-delay:90ms; }
+body.doom-launching .doom-panel:nth-child(3) { transition-delay:180ms; }
+body.doom-launching .doom-panel:nth-child(4) { transition-delay:270ms; }
+body.doom-launching .doom-panel:nth-child(5) { transition-delay:360ms; }
+body.doom-launching .doom-panel:nth-child(6) { transition-delay:450ms; }
+body.doom-launching .app { transform:translateY(100vh); filter:brightness(.7) blur(2px); pointer-events:none; }
+@media (max-width:900px) { body { overflow:auto; } .mobile-block { display:flex; } .app { display:none; } }
