@@ -1121,10 +1121,63 @@ terminalShell.addEventListener('mousedown', function() {
   setTimeout(function() { cmdline.focus({ preventScroll: true }); }, 0);
 });
 
+// ── Boot sequence ──────────────────────────────────────────────────────
+
+const BOOT_LINES = [
+  { ms: 0,   type: 'info', text: 'systemd[1]: Portfolio v2025 (anatolii@pxl-digital) — booting' },
+  { ms: 90,  type: 'ok',   text: 'Reached target Basic System.' },
+  { ms: 65,  type: 'ok',   text: 'Started Journal Service.' },
+  { ms: 70,  type: 'ok',   text: 'Mounted /home/anatolii filesystem.' },
+  { ms: 65,  type: 'ok',   text: 'Started cloudflare-zero-trust.service.' },
+  { ms: 70,  type: 'ok',   text: 'Started metal-playlist.service.' },
+  { ms: 65,  type: 'ok',   text: 'Started coffee-dependency.service.' },
+  { ms: 65,  type: 'ok',   text: 'Started homelab.service.' },
+  { ms: 260, type: 'fail', text: 'Failed to start five-year-plan.service: Unit not found.' },
+  { ms: 80,  type: 'fail', text: 'Failed to start frontend-enthusiasm.service: No such file or directory.' },
+  { ms: 80,  type: 'fail', text: 'Failed to start project-management.service: Dependency failed.' },
+  { ms: 80,  type: 'fail', text: 'Failed to start corporate-buzzwords.service: Access denied.' },
+  { ms: 310, type: 'ok',   text: 'Started imposter-syndrome-suppressor.service.' },
+  { ms: 70,  type: 'warn', text: 'camera.service: condition check resulted in skip. Not used recently.' },
+  { ms: 75,  type: 'degd', text: 'professional-dutch.service: running in degraded state.' },
+  { ms: 80,  type: 'ok',   text: 'Started assertiveness.service. [still loading, no ETA]' },
+  { ms: 220, type: 'ok',   text: 'Reached target Portfolio Ready.' },
+];
+
+function runBootSequence(onDone) {
+  cmdline.disabled = true;
+  promptEl.textContent = '';
+  var accumulated = 0;
+  BOOT_LINES.forEach(function(entry) {
+    accumulated += entry.ms;
+    setTimeout(function() {
+      if (entry.type === 'info') {
+        appendLine(entry.text, 'muted');
+      } else {
+        var labels = { ok: '  OK  ', fail: 'FAILED', warn: ' WARN ', degd: ' DEGD ' };
+        var cls    = { ok: 'ok',    fail: 'fail',   warn: 'warn',  degd: 'degd'  };
+        var label  = labels[entry.type] || '  ..  ';
+        var color  = cls[entry.type]    || '';
+        appendHTML(
+          '<span class="muted">[</span><span class="' + color + '">' + label +
+          '</span><span class="muted">]</span> ' + entry.text
+        );
+      }
+    }, accumulated);
+  });
+  setTimeout(function() {
+    appendLine('');
+    cmdline.disabled = false;
+    onDone();
+  }, accumulated + 420);
+}
+
 // ── Init ───────────────────────────────────────────────────────────────
 
-appendLine('PXL I-Talent Portfolio – Safonov Anatolii');
-appendLine('Use the credentials in the help panel to log in.', 'muted');
-renderPrompt();
 renderHelp();
-followTerminalBottom(true);
+runBootSequence(function() {
+  appendLine('PXL I-Talent Portfolio – Safonov Anatolii');
+  appendLine('Use the credentials in the help panel to log in.', 'muted');
+  renderPrompt();
+  renderHelp();
+  followTerminalBottom(true);
+});

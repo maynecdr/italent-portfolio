@@ -45,4 +45,8 @@ body.rmrf-active .rmrf-overlay { opacity:1; pointer-events:auto; }
 .rmrf-hint { font-family:'Courier New', monospace; color:#4a4a3a; font-size:.78rem; margin:0; letter-spacing:.06em; }
 .dir-name { color: #6bb5ff; }
 .file-name { color: #d8d8d8; }
+.ok { color: #5af78e; }
+.fail { color: #ff5c57; }
+.warn { color: #f3f99d; }
+.degd { color: #ff9f43; }
 @media (max-width:900px) { body { overflow:auto; } .mobile-block { display:flex; } .app { display:none; } }
