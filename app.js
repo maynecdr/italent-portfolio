@@ -1163,10 +1163,10 @@ function runBootSequence(onDone) {
     }, accumulated);
   });
   setTimeout(function() {
-    appendLine('');
+    output.innerHTML = '';
     cmdline.disabled = false;
     onDone();
-  }, accumulated + 420);
+  }, accumulated + 1100);
 }
 
 // ── Init ───────────────────────────────────────────────────────────────
