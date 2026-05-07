@@ -871,38 +871,59 @@ function printTree() {
 // ── Autocomplete ───────────────────────────────────────────────────────
 
 function getAutocompleteOptions(input) {
-  const parts = input.split(' ').filter(function(p) { return p.length > 0; });
-  const isCommandPosition = parts.length === 0 || (parts.length === 1 && !input.endsWith(' '));
+  const endsWithSpace = input.endsWith(' ');
+  const tokens = input.trimStart().split(/\s+/).filter(Boolean);
+  const isCommandPosition = tokens.length === 0 || (tokens.length === 1 && !endsWithSpace);
+
   if (isCommandPosition) {
-    const prefix = parts[0] || '';
+    const prefix = tokens[0] || '';
     return COMMANDS.filter(function(c) { return c.indexOf(prefix) === 0; });
   }
-  const command = parts[0];
-  if (command === 'cd' || command === 'cat') {
-    const partial = input.endsWith(' ') ? '' : (parts[parts.length - 1] || '');
-    const currentNode = getNode(state.cwd);
-    if (!currentNode || currentNode.type !== 'dir') return [];
-    let opts = Object.entries(currentNode.children)
-      .filter(function(e) { return command !== 'cd' || e[1].type === 'dir'; })
-      .map(function(e) { return e[0]; });
-    if (command === 'cd' && state.cwd !== '/') opts.push('..');
-    return opts.filter(function(o) { return o.indexOf(partial) === 0; });
-  }
-  return [];
+
+  const command = tokens[0];
+  if (command !== 'cd' && command !== 'cat') return [];
+
+  const partial = endsWithSpace ? '' : (tokens[tokens.length - 1] || '');
+  const lastSlash = partial.lastIndexOf('/');
+  const dirPart = lastSlash >= 0 ? partial.slice(0, lastSlash + 1) : '';
+  const namePart = partial.slice(dirPart.length);
+
+  const lookupPath = normalizePath(dirPart || '.');
+  const dirNode = getNode(lookupPath);
+  if (!dirNode || dirNode.type !== 'dir') return [];
+
+  const entries = Object.entries(dirNode.children)
+    .filter(function(e) { return command !== 'cd' || e[1].type === 'dir'; })
+    .map(function(e) { return e[0]; });
+
+  if (command === 'cd' && lookupPath !== '/') entries.push('..');
+
+  return entries
+    .filter(function(name) { return name.indexOf(namePart) === 0; })
+    .map(function(name) { return dirPart + name; });
 }
 
 function applyAutocomplete() {
   const current = cmdline.value;
   const matches = getAutocompleteOptions(current);
   if (!matches.length) return;
-  const parts = current.split(' ').filter(function(p) { return p.length > 0; });
+
+  const endsWithSpace = current.endsWith(' ');
+  const tokens = current.trimStart().split(/\s+/).filter(Boolean);
+  const isCmd = tokens.length <= 1 && !endsWithSpace;
+
   if (matches.length === 1) {
-    const isCmd = parts.length <= 1 && !current.endsWith(' ');
     if (isCmd) { cmdline.value = matches[0] + ' '; }
-    else { cmdline.value = parts[0] + ' ' + matches[0] + ' '; }
+    else { cmdline.value = tokens[0] + ' ' + matches[0] + ' '; }
     return;
   }
-  appendLine(matches.join('    '));
+
+  // Strip common dir prefix for display so output isn't noisy
+  const partial = endsWithSpace ? '' : (tokens[tokens.length - 1] || '');
+  const lastSlash = partial.lastIndexOf('/');
+  const dirPart = lastSlash >= 0 ? partial.slice(0, lastSlash + 1) : '';
+  const displayNames = matches.map(function(m) { return m.slice(dirPart.length); });
+  appendLine(displayNames.join('    '));
   followTerminalBottom();
 }
 
